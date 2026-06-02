@@ -1,0 +1,41 @@
+name: CD - Deploy
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy a DEV
+        run: |
+          echo "Deploy DEV"
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_DEV }}
+
+  deploy-qa:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy a QA
+        run: |
+          echo "Deploy QA"
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_QA }}
+
+  deploy-prd:
+    if: github.ref == 'refs/heads/main'
+    needs: deploy-qa
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Deploy a PRD
+        run: |
+          echo "Deploy PRD"
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_PRD }}
