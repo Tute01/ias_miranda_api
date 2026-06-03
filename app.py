@@ -4,13 +4,17 @@ import os
 
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", 
+                                                  "postgresql://miranda_api_db_user:1yLS5e6We92Lz3JZ6AUG2Fhfu0kc98LC@dpg-d8eoqmsp3tds738qbks0-a.oregon-postgres.render.com/miranda_api_db"
+                                                  )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
- 
+with app.app_context():
+    db.create_all()
+
+
 class Cliente(db.Model):
     __tablename__ = "clientes"
 
@@ -29,6 +33,11 @@ def cliente_a_diccionario(cliente):
         "email": cliente.email,
         "telefono": cliente.telefono
     }
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 
 @app.route("/health")
@@ -124,14 +133,8 @@ def eliminar_cliente(id_cliente):
 
     return jsonify({"mensaje": "Cliente eliminado"})
 
-@app.route("/")
-def index():
-    return render_template("index.html")
 
 if __name__ == "__main__":
-
-    with app.app_context():
-        db.create_all()
 
     port = int(os.environ.get("PORT", 5000))
 
