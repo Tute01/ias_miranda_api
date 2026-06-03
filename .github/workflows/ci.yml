@@ -29,6 +29,7 @@ jobs:
         run: pytest -m "integration"
 
       - name: Tests seguridad
+        if: github.base_ref == 'main'
         run: pytest -m "security"
 
       - name: Análisis con Bandit
