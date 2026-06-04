@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 import os
 
+load_dotenv()
 app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", 
-                                                  "postgresql://miranda_api_db_user:1yLS5e6We92Lz3JZ6AUG2Fhfu0kc98LC@dpg-d8eoqmsp3tds738qbks0-a.oregon-postgres.render.com/miranda_api_db"
-                                                  )
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
